@@ -1960,6 +1960,7 @@ body:not(.lg-from-hash) .lg-outer.lg-start-zoom .lg-item:not(.lg-zoomable).lg-co
 .criteria__table-delete img {
   width: 100%;
   object-fit: cover;
+  pointer-events: none;
 }
 
 .financial-tabs {

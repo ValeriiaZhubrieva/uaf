@@ -5533,7 +5533,95 @@ function addActiveParentClass(buttonsClass, activeClass, clickNotInside = true) 
   });
 }
 addActiveParentClass(".lang__current", "lang-open");
-addActiveParentClass(".menu__toggle", "submenu-open");
+function addActiveHoverParentClass(buttonsClass, activeClass, otherChildClass = null, clickNotInside = true) {
+  const buttons = document.querySelectorAll(buttonsClass);
+  const isHoverSupported = !window.matchMedia("(hover: none)").matches;
+  const removeAllActiveClasses = () => {
+    buttons.forEach((item) => {
+      item.closest(buttonsClass).parentElement.classList.remove(activeClass);
+    });
+  };
+  const timeouts = /* @__PURE__ */ new WeakMap();
+  if (clickNotInside) {
+    document.addEventListener("click", function(e) {
+      const isClickInside = Array.from(buttons).some((button) => {
+        const parent = button.closest(buttonsClass).parentElement;
+        return parent.contains(e.target);
+      });
+      if (!isClickInside) {
+        removeAllActiveClasses();
+      }
+    });
+  }
+  buttons.forEach((item) => {
+    const parent = item.closest(buttonsClass).parentElement;
+    const subcatalog = otherChildClass ? parent.querySelector(otherChildClass) : null;
+    if (isHoverSupported) {
+      let isCursorInside = false;
+      const cancelTimeout = () => {
+        if (timeouts.has(parent)) {
+          clearTimeout(timeouts.get(parent));
+          timeouts.delete(parent);
+        }
+      };
+      const scheduleClose = () => {
+        cancelTimeout();
+        const timeoutId = setTimeout(() => {
+          if (!isCursorInside) {
+            parent.classList.remove(activeClass);
+          }
+        }, 150);
+        timeouts.set(parent, timeoutId);
+      };
+      const addHoverListeners = (el) => {
+        if (!el) return;
+        el.addEventListener("mouseenter", () => {
+          isCursorInside = true;
+          cancelTimeout();
+        });
+        el.addEventListener("mouseleave", () => {
+          isCursorInside = false;
+          scheduleClose();
+        });
+      };
+      item.addEventListener("mouseenter", function(e) {
+        e.preventDefault();
+        removeAllActiveClasses();
+        parent.classList.add(activeClass);
+        cancelTimeout();
+      });
+      addHoverListeners(item);
+      addHoverListeners(parent);
+      addHoverListeners(subcatalog);
+      if (subcatalog) {
+        subcatalog.addEventListener(
+          "scroll",
+          () => {
+            if (parent.classList.contains(activeClass)) {
+              cancelTimeout();
+            }
+          },
+          { passive: true }
+        );
+      }
+    } else {
+      item.addEventListener("click", function(e) {
+        e.preventDefault();
+        const isActive = parent.classList.contains(activeClass);
+        removeAllActiveClasses();
+        if (!isActive) {
+          parent.classList.add(activeClass);
+        }
+        if (subcatalog) {
+          subcatalog.addEventListener("click", function(e2) {
+            e2.stopPropagation();
+          });
+        }
+      });
+    }
+  });
+}
+addActiveHoverParentClass(".menu__toggle", "submenu-open", ".submenu");
 function menuInit() {
   document.addEventListener("click", function(e) {
     if (e.target.closest(".menu__icon")) {
@@ -7918,6 +8006,46 @@ function tabs() {
   }
 }
 window.addEventListener("load", tabs);
+document.addEventListener("click", function(e) {
+  if (e.target.closest(".criteria__table-delete")) {
+    const deleteBtn = e.target.closest(".criteria__table-delete");
+    const row = deleteBtn.closest(".criteria__table-row");
+    if (row) {
+      row.remove();
+    }
+  }
+});
+function enableMouseScroll(containerSelector) {
+  const containers = document.querySelectorAll(containerSelector);
+  if (!containers.length) return;
+  containers.forEach((container) => {
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    container.addEventListener("mousedown", (e) => {
+      isDown = true;
+      container.classList.add("dragging");
+      startX = e.pageX - container.offsetLeft;
+      scrollLeft = container.scrollLeft;
+    });
+    container.addEventListener("mouseleave", () => {
+      isDown = false;
+      container.classList.remove("dragging");
+    });
+    container.addEventListener("mouseup", () => {
+      isDown = false;
+      container.classList.remove("dragging");
+    });
+    container.addEventListener("mousemove", (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - container.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      container.scrollLeft = scrollLeft - walk;
+    });
+  });
+}
+enableMouseScroll(".financial-tabs__navigation");
 function spollers() {
   const spollersArray = document.querySelectorAll("[data-fls-spollers]");
   if (spollersArray.length > 0) {
