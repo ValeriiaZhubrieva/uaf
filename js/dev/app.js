@@ -8011,7 +8011,10 @@ document.addEventListener("click", function(e) {
     const deleteBtn = e.target.closest(".criteria__table-delete");
     const row = deleteBtn.closest(".criteria__table-row");
     if (row) {
-      row.remove();
+      row.classList.add("removing");
+      setTimeout(() => {
+        row.remove();
+      }, 600);
     }
   }
 });

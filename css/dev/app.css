@@ -554,10 +554,7 @@ body {
 }
 
 .submenu {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.3s;
+  display: none;
   position: absolute;
   top: 100%;
   width: 100%;
@@ -582,11 +579,6 @@ body {
   left: 0;
   transform: translate(-100%, 0rem);
   background: #007DD7 url("../assets/img/header/header-decor-left.webp") top right/31.25rem 17.625rem no-repeat;
-}
-.submenu-open .submenu {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: all;
 }
 .submenu__list {
   display: grid;
@@ -1898,12 +1890,17 @@ body:not(.lg-from-hash) .lg-outer.lg-start-zoom .lg-item:not(.lg-zoomable).lg-co
   border-bottom: 0.25rem solid transparent;
   padding: 1.25rem 2.25rem 1.25rem 1rem;
   transition: border-color 0.3s;
-}
-.criteria__table-row:nth-child(even) {
   background-color: #fff;
 }
-.criteria__table-row:nth-child(odd) {
+.criteria__table-row.grey-bg {
   background-color: #f8f8f8;
+}
+.criteria__table-row.removing {
+  opacity: 0;
+  transition: all 0.4s;
+  height: 0;
+  padding: 0 1.25rem;
+  border: 0;
 }
 .criteria__table-num {
   font-weight: 700;
@@ -2439,7 +2436,7 @@ body:not(.lg-from-hash) .lg-outer.lg-start-zoom .lg-item:not(.lg-zoomable).lg-co
     pointer-events: all;
   }
   .menu__list {
-    flex-direction: column;
+    display: grid;
     align-items: stretch;
   }
   .menu__list--dropdown {
@@ -2881,10 +2878,7 @@ body:not(.lg-from-hash) .lg-outer.lg-start-zoom .lg-item:not(.lg-zoomable).lg-co
   }}
 @media (min-width: 61.99875em) {
   .menu__list--dropdown {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.3s;
+    display: none;
     flex-direction: column;
     align-items: stretch;
     position: absolute;
@@ -2913,9 +2907,10 @@ body:not(.lg-from-hash) .lg-outer.lg-start-zoom .lg-item:not(.lg-zoomable).lg-co
     background: #007DD7 url("../assets/img/header/header-decor-left.webp") center right/31.25rem 17.625rem no-repeat;
   }
   .menu-open .menu__list--dropdown {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: all;
+    display: flex;
+  }
+  .submenu-open .submenu {
+    display: grid;
   }
   .login {
     padding-bottom: 2.5rem;
