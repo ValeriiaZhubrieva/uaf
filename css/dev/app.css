@@ -523,6 +523,7 @@ body {
 }
 .menu__list {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1.375rem 2.75rem;
 }
@@ -2780,6 +2781,11 @@ body:not(.lg-from-hash) .lg-outer.lg-start-zoom .lg-item:not(.lg-zoomable).lg-co
   }
   .deadlines-spollers__title {
     padding: 0.875rem;
+  }
+  .deadlines-spollers__title::after {
+    width: 1.5625rem;
+    height: 1.5625rem;
+    background-size: 1.5625rem 1.5625rem;
   }
   .deadlines-spollers__img {
     max-width: 100%;
